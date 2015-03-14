@@ -59,9 +59,12 @@ WSGI_APPLICATION = 'Achievement.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'AshishSoni',
+        'USER': 'jayshah',
+        'PASSWORD': 'uscvsi21', 
+        'HOST': 'ashishsoni.cdj2wpukrnhb.us-west-1.rds.amazonaws.com',
+    },
 }
 
 # Internationalization
@@ -82,3 +85,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# Sending Email
+DEFAULT_FROM_EMAIL = "shahjaykiran@gmail.com"
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_USE_TLS = False
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 25
+EMAIL_HOST_USER = 'shahjaykiran@gmail.com'
+EMAIL_HOST_PASSWORD = 'Poojay@1'

@@ -12,7 +12,7 @@ from django.views.decorators.csrf import csrf_exempt
 from StringIO import StringIO
 from datetime import datetime
 from django.db.models import Q #to allow complex lookups in models
-from Diaries.models import User, Achievements
+from Diaries.models import User, Achievements, Likes, Comments, Tags
 from . import utils
 import logging
 import PySQLPool
@@ -74,6 +74,66 @@ def loginUser(request):
     	else:
 	    	return HttpResponse(json.dumps({"login":"False","message":"Incorrect Username/password"}), content_type="application/json")
 	return HttpResponse(json.dumps({"login":"False","message":"Incorrect Username/password"}), content_type="application/json")    
+
+@csrf_exempt
+def addNewAchievement(request):
+    if request.method == "POST":
+        TITLE = request.POST.get('ach_title')
+        DESCRIPTION = request.POST.get('ach_desc')
+        DATE = request.POST.get('ach_date')
+        LOCATION = request.POST.get('ach_location')
+        CURRENT_DATE = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        newAchievement = Achievements(User_ID=3,Achievement_Title=TITLE, Achievement_Description=DESCRIPTION, Achievement_Date=DATE, Achievement_Location=LOCATION, Achievement_Attachments='', Achievement_Timestamp=CURRENT_DATE)
+        newAchievement.save()
+        return HttpResponse(json.dumps({"achievements":"True","message":"Successfully Added"}), content_type="application/json")
+    return HttpResponse(json.dumps({"achievements":"False","message":"Sorry! Your achievement could not be added"}), content_type="application/json")
+
+@csrf_exempt
+def likeAchievement(request):
+    if request.method == "POST":
+        USER = request.POST.get('user_id')
+        ACHIEVEMENT = request.POST.get('achievement_id')
+        CURRENT_DATE = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        newLike = Likes(User_ID=USER, Achievement_ID=ACHIEVEMENT, Like_Timestamp=CURRENT_DATE)
+        newLike.save()
+        return HttpResponse(json.dumps({"like":"True","message":""}), content_type="application/json")
+    return HttpResponse(json.dumps({"like":"False","message":"Some error occured. Please try again later."}), content_type="application/json")
+
+@csrf_exempt
+def commentAchievement(request):
+    if request.method == "POST":
+        USER = request.POST.get('user_id')
+        ACHIEVEMENT = request.POST.get('achievement_id')
+        COMMENT = request.POST.get('comment')
+        CURRENT_DATE = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        newComment = Comments(User_ID=USER, Achievement_ID=ACHIEVEMENT,Comment=COMMENT, Comment_Timestamp=CURRENT_DATE)
+        newComment.save()
+        return HttpResponse(json.dumps({"like":"True","message":""}), content_type="application/json")
+    return HttpResponse(json.dumps({"like":"False","message":"Some error occured. Please try again later."}), content_type="application/json")
+
+@csrf_exempt
+def tagAchievement(request):
+    if request.method == "POST":
+        USER = request.POST.get('user_id')
+        ACHIEVEMENT = request.POST.get('achievement_id')
+        TAG = request.POST.get('tag')
+        TAG = TAG.split(' ')
+        for x in TAG:
+            CURRENT_DATE = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            newTag = Tags(User_ID=USER, Achievement_ID=ACHIEVEMENT,Tag=x, Tag_Timestamp=CURRENT_DATE)
+            newTag.save()
+        tags = list(Tags.objects.filter(Achievement_ID = ACHIEVEMENT).order_by('Tag_Timestamp').values())
+        return HttpResponse(json.dumps({"like":"True","message":tags},default=date_handler), content_type="application/json")
+    return HttpResponse(json.dumps({"like":"False","message":"Some error occured. Please try again later."}), content_type="application/json")
+
+@csrf_exempt
+def fetchAllComments(request):
+    if request.method=="POST":
+        ACHIEVEMENT = request.POST.get('achievement_id')
+        comments = list(Comments.objects.filter(Achievement_ID = ACHIEVEMENT).order_by('Comment_Timestamp').values())
+        print comments
+        return HttpResponse(json.dumps(comments,default=date_handler), content_type="application/json")
+    return HttpResponse(json.dumps({"comment":"False","message":"Some error occured. Please try again later."},default=date_handler), content_type="application/json")
 
 @csrf_exempt
 def viewFeed(request):

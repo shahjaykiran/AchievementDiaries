@@ -9,9 +9,12 @@ urlpatterns = patterns('',
     url(r'^registerUser/', views.registerUser, name='registerUser'),
     url(r'^activateUser/', views.activateUser, name='activateUser'),
     url(r'^loginUser/', views.loginUser, name='loginUser'),
-    url(r'^viewFeed/', views.viewFeed, name='viewFeed')
-
-
+    url(r'^viewFeed/', views.viewFeed, name='viewFeed'),
+	url(r'^addNewAchievement/', views.addNewAchievement, name='addNewAchievement'),
+	url(r'^likeAchievement/', views.likeAchievement, name='likeAchievement'),
+	url(r'^commentAchievement/', views.commentAchievement, name='commentAchievement'),
+	url(r'^tagAchievement/', views.tagAchievement, name='tagAchievement'),
+	url(r'^fetchComments/', views.fetchAllComments, name='fetchAllComments')
 )
 #+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 # handler500 = views.handler500
